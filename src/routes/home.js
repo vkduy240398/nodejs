@@ -1,0 +1,12 @@
+var express = require('express');
+var router = express.Router();
+const homeController = require('../app/controllers/HomeController');
+router.get('/add',homeController.add);
+router.post('/store',homeController.store);
+router.get('/:id/edit',homeController.edit);
+router.put('/:id',homeController.update);
+router.delete('/:id',homeController.destroy);
+router.post('/publish',homeController.publish);
+router.post('/delete',homeController.delete);
+router.get('/',homeController.index);
+module.exports = router;

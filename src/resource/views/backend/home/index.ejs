@@ -1,0 +1,138 @@
+<link href="/libs/datatables/dataTables.bootstrap4.css" rel="stylesheet" type="text/css" />
+<link href="/libs/datatables/buttons.bootstrap4.css" rel="stylesheet" type="text/css" />
+<link href="/libs/datatables/responsive.bootstrap4.css" rel="stylesheet" type="text/css" />
+<link href="/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Adminox</a></li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Tables</a></li>
+                    <li class="breadcrumb-item active">Datatable</li>
+                </ol>
+            </div>
+            <h4 class="page-title">Datatable</h4>
+        </div>
+    </div>
+</div>     
+<!-- end page title --> 
+
+<div class="row">
+        <div class="col-12">
+            <div class="card-box table-responsive">
+                <div class="row">
+                    <div class="col-2">
+                        <div class="form-group">
+                            <a href="<%= locals.control %>/add" class="btn btn-primary">Thêm mới</a>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                       
+                    </div>
+                </div>                
+                <table id="datatable" class="table table-bordered  dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                    <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>Name</th>
+                        <th>Code</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Address</th>
+                        <th>Hiển thị</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <% for(var i = 0;i< data.length;i++){ %>
+                        <tr class="tr<%= data[i].id %>">
+                            <td><%= data[i].id %></td>
+                            <td><%= data[i].name %></td>
+                            <td><%= data[i].code %></td>
+                            <td><%= data[i].phone %></td>
+                            <td><%= data[i].email %></td>
+                            <td><%= data[i].address %></td>
+                            <td><input type="checkbox" <%= data[i].publish==1?'checked':'' %> id="publish<%= data[i].id %>" onclick="changeglobal(<%= data[i].id %>,'publish')" data-control="<%= locals.control %>"></td>
+                            <td>
+                                <div  style="display: flex;justify-content: space-evenly;">
+                                    <!-- <form action="<%=locals.control+`/${data[0].id}?_method=DELETE`%>" method="post"><button type="submit" class="btn btn-danger">Delete</button></form> -->
+                                    <a href="<%= locals.control+'/'+data[i].id %>/edit" class="btn btn-info">Edit</a>
+                                    <a href="javascript:void(0)"onclick="del(<%= data[i].id %>)" id="delete<%= data[i].id %>" class="btn btn-danger">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                    <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div> <!-- end row -->
+<!-- Required datatable js -->
+<script src="/libs/datatables/jquery.dataTables.min.js"></script>
+<script src="/libs/datatables/dataTables.bootstrap4.min.js"></script>
+<!-- Buttons examples -->
+<script src="/libs/datatables/dataTables.buttons.min.js"></script>
+<script src="/libs/datatables/buttons.bootstrap4.min.js"></script>
+<script src="/libs/jszip/jszip.min.js"></script>
+<script src="/libs/pdfmake/pdfmake.min.js"></script>
+<script src="/libs/pdfmake/vfs_fonts.js"></script>
+<script src="/libs/datatables/buttons.html5.min.js"></script>
+<script src="/libs/datatables/buttons.print.min.js"></script>
+<script src="/libs/datatables/buttons.colVis.js"></script>
+<!-- Responsive examples -->
+<script src="/libs/datatables/dataTables.responsive.min.js"></script>
+<script src="/libs/datatables/responsive.bootstrap4.min.js"></script>
+<!-- alert -->
+<script src="/libs/sweetalert2/sweetalert2.min.js"></script>
+
+<!-- Datatables init -->
+<script src="/js/pages/datatables.init.js"></script>
+
+<!-- App js -->
+<script src="/js/app.min.js"></script>
+<script>
+    function changeglobal(id,properties){
+        var control = $("#"+properties+id).attr('data-control');
+        var global = 0;
+        if ($("#"+properties+id).is(':checked')) {
+            global = 1;
+        }
+        if (id !='') {
+            $.ajax({
+                url:'home/publish',
+                method:"post",
+                data:{'id':id,'publish':global},
+                dataType : 'json',
+                success:function(response){
+                    Swal.fire("Cập nhật thành công", "", "success");
+                }
+            });
+        }
+    }
+    function del(id){
+        Swal.fire({
+        title: "Bạn có chắc chắn muốn xóa không?",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Đồng ý"
+    }).then(function(e){
+        if (e.value) {
+            $.ajax({
+                url:'home/delete',
+                method:"post",
+                data:{'id':id},
+                dataType : 'json',
+                success:function(response){
+                    Swal.fire("Xóa thành công", "", "success");
+                    $('#delete'+id).parent().parent().fadeOut();
+                    $('.tr'+id).remove();
+                }
+            });
+        }
+    
+    });
+    }
+</script>
